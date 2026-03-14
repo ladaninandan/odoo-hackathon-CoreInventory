@@ -11,14 +11,13 @@ const {
   getMe,
 } = require('../controllers/authController');
 const authenticate = require('../middleware/authenticate');
-const { loginLimiter, otpLimiter } = require('../middleware/rateLimiter');
 
 router.post('/register', register);
-router.post('/login', loginLimiter, login);
+router.post('/login', login);
 router.post('/logout', authenticate, logout);
 router.post('/refresh', refresh);
-router.post('/forgot-password', otpLimiter, forgotPassword);
-router.post('/verify-otp', otpLimiter, verifyOtp);
+router.post('/forgot-password', forgotPassword);
+router.post('/verify-otp', verifyOtp);
 router.post('/reset-password', resetPassword);
 router.get('/me', authenticate, getMe);
 

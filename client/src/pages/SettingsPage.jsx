@@ -215,6 +215,16 @@ export default function SettingsPage() {
     }
   };
 
+  const updateUserRole = async (userId, role) => {
+    try {
+      await api.put(`/settings/users/${userId}`, { role });
+      toast.success('User role updated');
+      loadUsers();
+    } catch (err) {
+      toast.error('Failed to update user role');
+    }
+  };
+
   return (
     <PageWrapper title="Settings" description="Manage categories, warehouses, and users">
       {/* Tabs */}
@@ -257,7 +267,15 @@ export default function SettingsPage() {
                     <td className="px-4 py-3 text-sm font-medium text-surface-100">{u.name}</td>
                     <td className="px-4 py-3 text-sm text-surface-300 hidden sm:table-cell">{u.email}</td>
                     <td className="px-4 py-3">
-                      <Badge variant={u.role === 'manager' ? 'info' : 'warning'}>{u.role}</Badge>
+                      <select 
+                        className="input py-1 px-2 text-sm bg-surface-800 border-none w-auto outline-none focus:ring-1 focus:ring-brand-500 rounded-lg cursor-pointer transition-colors hover:bg-surface-700" 
+                        value={u.role} 
+                        onChange={(e) => updateUserRole(u._id, e.target.value)}
+                        title="Change user role"
+                      >
+                        <option value="staff">Staff</option>
+                        <option value="manager">Manager</option>
+                      </select>
                     </td>
                     <td className="px-4 py-3">
                       <Badge variant={u.isActive ? 'success' : 'danger'}>{u.isActive ? 'Active' : 'Disabled'}</Badge>

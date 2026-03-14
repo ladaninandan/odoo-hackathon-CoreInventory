@@ -5,7 +5,7 @@ const compression = require('compression');
 const morgan = require('morgan');
 const cookieParser = require('cookie-parser');
 const { errorHandler } = require('./middleware/errorHandler');
-const { apiLimiter } = require('./middleware/rateLimiter');
+// Remove rate limiter imports
 
 const authRoutes = require('./routes/authRoutes');
 const productRoutes = require('./routes/productRoutes');
@@ -41,8 +41,7 @@ if (process.env.NODE_ENV !== 'test') {
   app.use(morgan('dev'));
 }
 
-// Rate limiting
-app.use('/api/', apiLimiter);
+// Rate limiters have been removed per user request
 
 // API routes
 app.use('/api/v1/auth', authRoutes);

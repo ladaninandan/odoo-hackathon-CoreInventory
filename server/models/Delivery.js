@@ -37,7 +37,7 @@ const deliverySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-deliverySchema.index({ deliveryNumber: 1 });
+// deliverySchema.index({ deliveryNumber: 1 });
 deliverySchema.index({ status: 1 });
 
 module.exports = mongoose.model('Delivery', deliverySchema);

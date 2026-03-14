@@ -35,26 +35,52 @@ exports.getDashboardData = async (req, res, next) => {
     }
 
     // Stock trends (last 7 days)
-    const sevenDaysAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
-    const trendData = await StockLedger.aggregate([
-      { $match: { createdAt: { $gte: sevenDaysAgo } } },
-      { $group: { _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt' } }, inbound: { $sum: { $cond: [{ $gt: ['$qtyChange', 0] }, '$qtyChange', 0] } }, outbound: { $sum: { $cond: [{ $lt: ['$qtyChange', 0] }, { $abs: '$qtyChange' }, 0] } } } },
+    const trendAgg = await StockLedger.aggregate([
+      { 
+        $match: { 
+          createdAt: { 
+            $gte: new Date(new Date().setDate(new Date().getDate() - 7)) 
+          } 
+        } 
+      },
+      { 
+        $group: { 
+          _id: { $dateToString: { format: '%Y-%m-%d', date: '$createdAt', timezone: 'Asia/Kolkata' } }, 
+          inbound: { $sum: { $cond: [{ $gt: ['$qtyChange', 0] }, '$qtyChange', 0] } }, 
+          outbound: { $sum: { $cond: [{ $lt: ['$qtyChange', 0] }, { $abs: '$qtyChange' }, 0] } } 
+        } 
+      },
       { $sort: { _id: 1 } },
       { $project: { date: '$_id', inbound: 1, outbound: 1, _id: 0 } },
     ]);
+    
+    const trendByDate = Object.fromEntries(trendAgg.map((r) => [r.date, r]));
+    const trendData = [];
+    
+    for (let i = 6; i >= 0; i--) {
+      // Create a localized date string in YYYY-MM-DD
+      const d = new Date();
+      d.setDate(d.getDate() - i);
+      const tzOffset = d.getTimezoneOffset() * 60000;
+      const localISOTime = (new Date(d.getTime() - tzOffset)).toISOString().slice(0, 10);
+      
+      trendData.push(trendByDate[localISOTime] || { date: localISOTime, inbound: 0, outbound: 0 });
+    }
 
     // Movement type breakdown
     const movementBreakdown = await StockLedger.aggregate([
-      { $group: { _id: '$type', count: { $sum: 1 }, totalQty: { $sum: { $abs: '$qtyChange' } } } },
+      { $group: { _id: '$movementType', count: { $sum: 1 }, totalQty: { $sum: { $abs: '$qtyChange' } } } },
       { $project: { type: '$_id', count: 1, totalQty: 1, _id: 0 } },
     ]);
 
     // Stock by warehouse
     const stockByWarehouse = await StockLedger.aggregate([
       { $group: { _id: '$warehouse', total: { $sum: '$qtyChange' } } },
-      { $lookup: { from: 'warehouses', localField: '_id', foreignField: '_id', as: 'warehouse' } },
-      { $unwind: '$warehouse' },
-      { $project: { name: '$warehouse.name', total: 1, _id: 0 } },
+      // Convert string ID to ObjectId for lookup if needed (sometimes refs are stored as string)
+      { $addFields: { warehouseObjId: { $toObjectId: '$_id' } } },
+      { $lookup: { from: 'warehouses', localField: 'warehouseObjId', foreignField: '_id', as: 'warehouse' } },
+      { $unwind: { path: '$warehouse', preserveNullAndEmptyArrays: true } },
+      { $project: { name: { $ifNull: ['$warehouse.name', 'Unknown Warehouse'] }, total: 1, _id: 0 } },
     ]);
 
     // Top products by movement volume
@@ -62,9 +88,10 @@ exports.getDashboardData = async (req, res, next) => {
       { $group: { _id: '$product', totalMovement: { $sum: { $abs: '$qtyChange' } } } },
       { $sort: { totalMovement: -1 } },
       { $limit: 10 },
-      { $lookup: { from: 'products', localField: '_id', foreignField: '_id', as: 'product' } },
-      { $unwind: '$product' },
-      { $project: { name: '$product.name', totalMovement: 1, _id: 0 } },
+      { $addFields: { productObjId: { $toObjectId: '$_id' } } },
+      { $lookup: { from: 'products', localField: 'productObjId', foreignField: '_id', as: 'product' } },
+      { $unwind: { path: '$product', preserveNullAndEmptyArrays: true } },
+      { $project: { name: { $ifNull: ['$product.name', 'Unknown Product'] }, totalMovement: 1, _id: 0 } },
     ]);
 
     return sendSuccess(res, 200, 'Dashboard data', {
