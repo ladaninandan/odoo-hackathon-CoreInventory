@@ -2,7 +2,17 @@ import { useEffect, useState } from 'react';
 import api from '../services/api';
 import PageWrapper from '../components/layout/PageWrapper';
 import { PageSpinner } from '../components/common/Spinner';
-import { Package, DollarSign, AlertTriangle, TrendingUp, ArrowUpRight, ArrowDownRight, Activity } from 'lucide-react';
+import {
+  Package,
+  DollarSign,
+  AlertTriangle,
+  TrendingUp, // For receipts
+  TrendingDown, // For deliveries
+  ArrowRightLeft, // For transfers
+  ArrowUpRight,
+  ArrowDownRight,
+  Activity
+} from 'lucide-react';
 import {
   LineChart, Line, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
@@ -56,12 +66,18 @@ export default function DashboardPage() {
 
   return (
     <PageWrapper title="Dashboard" description="Overview of your inventory">
-      {/* KPI Cards */}
-      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4">
+      {/* Primary KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
         <KpiCard icon={Package} label="Total Products" value={kpi.totalProducts || 0} color="brand" />
         <KpiCard icon={DollarSign} label="Stock Value" value={`₹${(kpi.totalStockValue || 0).toLocaleString()}`} color="blue" />
         <KpiCard icon={AlertTriangle} label="Low Stock Items" value={kpi.lowStockCount || 0} color={kpi.lowStockCount > 0 ? 'red' : 'brand'} />
-        <KpiCard icon={Activity} label="Today's Movements" value={kpi.recentMovements || 0} sub={`${kpi.totalReceipts || 0} receipts · ${kpi.totalDeliveries || 0} deliveries`} color="amber" />
+      </div>
+
+      {/* Pending Operations KPI Cards */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4 mb-4">
+        <KpiCard icon={TrendingUp} label="Pending Receipts" value={kpi.pendingReceipts || 0} color="amber" />
+        <KpiCard icon={TrendingDown} label="Pending Deliveries" value={kpi.pendingDeliveries || 0} color="indigo" />
+        <KpiCard icon={ArrowRightLeft} label="Internal Transfers Scheduled" value={kpi.pendingTransfers || 0} color="fuchsia" />
       </div>
 
       {/* Charts Row 1 */}

@@ -13,10 +13,10 @@ const getCurrentStock = async (productId, warehouseId) => {
   return result[0]?.total ?? 0;
 };
 
-const writeEntry = async (
-  session,
-  { product, warehouse, movementType, documentRef, documentModel, qtyChange, performedBy }
-) => {
+// Controllers call: writeEntry({ product, warehouse, qtyChange, type, refModel, refId, performedBy, note }, session)
+const writeEntry = async (data, session) => {
+  const { product, warehouse, qtyChange, type, refModel, refId, performedBy } = data;
+
   const qtyBefore = await getCurrentStock(product, warehouse);
   const qtyAfter = qtyBefore + qtyChange;
 
@@ -25,9 +25,9 @@ const writeEntry = async (
       {
         product,
         warehouse,
-        movementType,
-        documentRef,
-        documentModel,
+        movementType: type,
+        documentRef: String(refId),
+        documentModel: refModel,
         qtyBefore,
         qtyChange,
         qtyAfter,

@@ -15,7 +15,7 @@ exports.getReceipts = async (req, res, next) => {
       Receipt.find(filter)
         .populate('warehouse', 'name code')
         .populate('createdBy', 'name')
-        .populate('items.product', 'name sku')
+        .populate('lines.product', 'name sku')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(parseInt(limit, 10)),
@@ -37,7 +37,7 @@ exports.createReceipt = async (req, res, next) => {
     const receipt = await Receipt.create({ ...req.body, createdBy: req.user.id });
     const populated = await receipt.populate([
       { path: 'warehouse', select: 'name code' },
-      { path: 'items.product', select: 'name sku' },
+      { path: 'lines.product', select: 'name sku' },
     ]);
     return sendSuccess(res, 201, 'Receipt created', { receipt: populated });
   } catch (error) {
@@ -52,13 +52,13 @@ exports.validateReceipt = async (req, res, next) => {
   try {
     const receipt = await Receipt.findById(req.params.id).session(session);
     if (!receipt) { await session.abortTransaction(); return sendError(res, 404, 'Receipt not found'); }
-    if (receipt.status === 'validated') { await session.abortTransaction(); return sendError(res, 400, 'Already validated'); }
+    if (receipt.status === 'done') { await session.abortTransaction(); return sendError(res, 400, 'Already validated'); }
 
-    for (const item of receipt.items) {
+    for (const line of receipt.lines) {
       await writeEntry({
-        product: item.product,
+        product: line.product,
         warehouse: receipt.warehouse,
-        qtyChange: item.qty,
+        qtyChange: line.qty,
         type: 'receipt',
         refModel: 'Receipt',
         refId: receipt._id,
@@ -67,7 +67,7 @@ exports.validateReceipt = async (req, res, next) => {
       }, session);
     }
 
-    receipt.status = 'validated';
+    receipt.status = 'done';
     receipt.validatedBy = req.user.id;
     receipt.validatedAt = new Date();
     await receipt.save({ session });

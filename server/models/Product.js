@@ -37,7 +37,6 @@ const productSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-productSchema.index({ sku: 1 });
 productSchema.index({ barcode: 1 });
 productSchema.index({ name: 'text', sku: 'text' });
 

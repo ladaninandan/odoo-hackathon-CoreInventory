@@ -17,6 +17,7 @@ import AdjustmentPage from './pages/AdjustmentPage';
 import HistoryPage from './pages/HistoryPage';
 import DashboardPage from './pages/DashboardPage';
 import ReportsPage from './pages/ReportsPage';
+import ProfilePage from './pages/ProfilePage';
 import {
   fetchReceipts, createReceipt, validateReceipt,
   fetchDeliveries, createDelivery, validateDelivery,
@@ -91,6 +92,7 @@ function AppLayout() {
             />
             <Route path="/history" element={<HistoryPage />} />
             <Route path="/reports" element={<ReportsPage />} />
+            <Route path="/profile" element={<ProfilePage />} />
             <Route
               path="/settings"
               element={

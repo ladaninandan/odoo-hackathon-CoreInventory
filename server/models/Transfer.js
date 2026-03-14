@@ -39,7 +39,15 @@ const transferSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-transferSchema.index({ transferNumber: 1 });
+// Auto-generate transferNumber if not provided
+transferSchema.pre('validate', async function (next) {
+  if (!this.transferNumber) {
+    const count = await mongoose.model('Transfer').countDocuments();
+    this.transferNumber = `TRF-${String(count + 1).padStart(5, '0')}`;
+  }
+  next();
+});
+
 transferSchema.index({ status: 1 });
 
 module.exports = mongoose.model('Transfer', transferSchema);

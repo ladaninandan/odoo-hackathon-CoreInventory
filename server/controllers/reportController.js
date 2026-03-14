@@ -2,15 +2,17 @@ const StockLedger = require('../models/StockLedger');
 const Product = require('../models/Product');
 const Receipt = require('../models/Receipt');
 const Delivery = require('../models/Delivery');
+const Transfer = require('../models/Transfer');
 const { sendSuccess } = require('../utils/apiResponse');
 
 // GET /api/v1/reports/dashboard
 exports.getDashboardData = async (req, res, next) => {
   try {
-    const [totalProducts, totalReceipts, totalDeliveries] = await Promise.all([
+    const [totalProducts, pendingReceipts, pendingDeliveries, pendingTransfers] = await Promise.all([
       Product.countDocuments({ isActive: true }),
-      Receipt.countDocuments(),
-      Delivery.countDocuments(),
+      Receipt.countDocuments({ status: { $in: ['waiting', 'ready', 'draft'] } }),
+      Delivery.countDocuments({ status: { $in: ['ready', 'draft'] } }),
+      Transfer.countDocuments({ status: { $in: ['waiting', 'ready', 'draft'] } }),
     ]);
 
     // Total stock value
@@ -99,9 +101,9 @@ exports.getDashboardData = async (req, res, next) => {
         totalProducts,
         totalStockValue: Math.round(totalStockValue * 100) / 100,
         lowStockCount: lowStockItems.length,
-        totalReceipts,
-        totalDeliveries,
-        recentMovements: await StockLedger.countDocuments({ createdAt: { $gte: new Date(Date.now() - 24 * 60 * 60 * 1000) } }),
+        pendingReceipts,
+        pendingDeliveries,
+        pendingTransfers,
       },
       charts: {
         trendData,

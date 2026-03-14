@@ -6,9 +6,7 @@ const lineSchema = new mongoose.Schema({
     ref: 'Product',
     required: [true, 'Product is required'],
   },
-  orderedQty: { type: Number, required: [true, 'Ordered quantity is required'], min: 1 },
-  receivedQty: { type: Number, default: 0, min: 0 },
-  unitCost: { type: Number, min: 0 },
+  qty: { type: Number, required: [true, 'Quantity is required'], min: 1 },
 });
 
 const receiptSchema = new mongoose.Schema(
@@ -39,7 +37,15 @@ const receiptSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-receiptSchema.index({ receiptNumber: 1 });
+// Auto-generate receiptNumber if not provided
+receiptSchema.pre('validate', async function (next) {
+  if (!this.receiptNumber) {
+    const count = await mongoose.model('Receipt').countDocuments();
+    this.receiptNumber = `REC-${String(count + 1).padStart(5, '0')}`;
+  }
+  next();
+});
+
 receiptSchema.index({ status: 1 });
 
 module.exports = mongoose.model('Receipt', receiptSchema);

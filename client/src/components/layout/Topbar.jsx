@@ -47,7 +47,10 @@ export default function Topbar({ onMenuClick, user }) {
         </button>
 
         {/* User avatar */}
-        <div className="flex items-center gap-3 rounded-lg border border-surface-700/50 bg-surface-800/50 px-3 py-1.5">
+        <div 
+          onClick={() => navigate('/profile')}
+          className="flex items-center gap-3 rounded-lg border border-surface-700/50 bg-surface-800/50 px-3 py-1.5 cursor-pointer hover:bg-surface-800 transition-colors"
+        >
           <div className="flex h-8 w-8 items-center justify-center rounded-full bg-brand-600/20 text-brand-400">
             <User className="h-4 w-4" />
           </div>

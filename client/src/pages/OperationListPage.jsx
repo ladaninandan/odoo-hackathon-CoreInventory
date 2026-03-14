@@ -14,7 +14,6 @@ export default function OperationListPage({
   fetchAction,
   createAction,
   validateAction,
-  itemKey = 'items',
   numberField,
   warehouseField = 'warehouse',
   showFrom,
@@ -28,44 +27,48 @@ export default function OperationListPage({
   const [showForm, setShowForm] = useState(false);
   const [statusFilter, setStatusFilter] = useState('all');
 
+  // Determine if this page needs supplier or customer fields
+  const isReceipts = title === 'Receipts';
+  const isDeliveries = title === 'Deliveries';
+
   const [form, setForm] = useState({
     warehouse: '',
     fromWarehouse: '',
     toWarehouse: '',
     supplier: '',
     customer: '',
-    items: [{ product: '', qty: 1 }],
+    lines: [{ product: '', qty: 1 }],
   });
 
   useEffect(() => {
     dispatch(fetchAction({ status: statusFilter, page: pagination.page, limit: pagination.limit }));
   }, [dispatch, statusFilter, pagination.page]);
 
-  const addItem = () => setForm({ ...form, items: [...form.items, { product: '', qty: 1 }] });
-  const removeItem = (i) => setForm({ ...form, items: form.items.filter((_, idx) => idx !== i) });
-  const updateItem = (i, field, value) => {
-    const updated = [...form.items];
+  const addLine = () => setForm({ ...form, lines: [...form.lines, { product: '', qty: 1 }] });
+  const removeLine = (i) => setForm({ ...form, lines: form.lines.filter((_, idx) => idx !== i) });
+  const updateLine = (i, field, value) => {
+    const updated = [...form.lines];
     updated[i] = { ...updated[i], [field]: field === 'qty' ? parseInt(value, 10) || 1 : value };
-    setForm({ ...form, items: updated });
+    setForm({ ...form, lines: updated });
   };
 
   const handleCreate = async (e) => {
     e.preventDefault();
-    const payload = { items: form.items };
+    const payload = { lines: form.lines };
     if (showFrom) {
       payload.fromWarehouse = form.fromWarehouse;
       payload.toWarehouse = form.toWarehouse;
     } else {
       payload.warehouse = form.warehouse;
     }
-    if (form.supplier) payload.supplier = form.supplier;
-    if (form.customer) payload.customer = form.customer;
+    if (isReceipts && form.supplier) payload.supplier = form.supplier;
+    if (isDeliveries && form.customer) payload.customer = form.customer;
 
     const result = await dispatch(createAction(payload));
     if (createAction.fulfilled.match(result)) {
       toast.success(`${title.slice(0, -1)} created`);
       setShowForm(false);
-      setForm({ warehouse: '', fromWarehouse: '', toWarehouse: '', supplier: '', customer: '', items: [{ product: '', qty: 1 }] });
+      setForm({ warehouse: '', fromWarehouse: '', toWarehouse: '', supplier: '', customer: '', lines: [{ product: '', qty: 1 }] });
       dispatch(fetchAction({ status: statusFilter, page: 1, limit: pagination.limit }));
     } else {
       toast.error(result.payload?.message || 'Creation failed');
@@ -82,7 +85,7 @@ export default function OperationListPage({
     }
   };
 
-  const statusColors = { draft: 'warning', validated: 'success' };
+  const statusColors = { draft: 'warning', validated: 'success', waiting: 'info', ready: 'brand', done: 'success', canceled: 'destructive' };
 
   return (
     <PageWrapper
@@ -99,6 +102,10 @@ export default function OperationListPage({
         <select className="input w-auto" value={statusFilter} onChange={(e) => setStatusFilter(e.target.value)}>
           <option value="all">All Status</option>
           <option value="draft">Draft</option>
+          <option value="waiting">Waiting</option>
+          <option value="ready">Ready</option>
+          <option value="done">Done</option>
+          <option value="canceled">Canceled</option>
           <option value="validated">Validated</option>
         </select>
       </div>
@@ -110,6 +117,8 @@ export default function OperationListPage({
             <thead>
               <tr className="border-b border-surface-700/50">
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Number</th>
+                {isReceipts && <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Supplier</th>}
+                {isDeliveries && <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Customer</th>}
                 {showFrom ? (
                   <>
                     <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">From</th>
@@ -118,7 +127,7 @@ export default function OperationListPage({
                 ) : (
                   <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Warehouse</th>
                 )}
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Items</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Lines</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Status</th>
                 <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400 hidden md:table-cell">Date</th>
                 {can('validate') && <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-surface-400">Action</th>}
@@ -126,13 +135,15 @@ export default function OperationListPage({
             </thead>
             <tbody className="divide-y divide-surface-700/30">
               {loading ? (
-                <tr><td colSpan={7} className="px-4 py-12 text-center text-sm text-surface-500">Loading...</td></tr>
+                <tr><td colSpan={8} className="px-4 py-12 text-center text-sm text-surface-500">Loading...</td></tr>
               ) : items.length === 0 ? (
-                <tr><td colSpan={7} className="px-4 py-12 text-center text-sm text-surface-500">No records found</td></tr>
+                <tr><td colSpan={8} className="px-4 py-12 text-center text-sm text-surface-500">No records found</td></tr>
               ) : (
                 items.map((item) => (
                   <tr key={item._id} className="hover:bg-surface-700/20 transition-colors">
                     <td className="px-4 py-3 text-sm font-mono text-surface-100">{item[numberField]}</td>
+                    {isReceipts && <td className="px-4 py-3 text-sm text-surface-300">{item.supplier || '—'}</td>}
+                    {isDeliveries && <td className="px-4 py-3 text-sm text-surface-300">{item.customer || '—'}</td>}
                     {showFrom ? (
                       <>
                         <td className="px-4 py-3 text-sm text-surface-300">{item.fromWarehouse?.name}</td>
@@ -141,12 +152,12 @@ export default function OperationListPage({
                     ) : (
                       <td className="px-4 py-3 text-sm text-surface-300">{item[warehouseField]?.name}</td>
                     )}
-                    <td className="px-4 py-3 text-sm text-surface-400">{item.items?.length} item(s)</td>
+                    <td className="px-4 py-3 text-sm text-surface-400">{item.lines?.length || 0} line(s)</td>
                     <td className="px-4 py-3"><Badge variant={statusColors[item.status]}>{item.status}</Badge></td>
                     <td className="px-4 py-3 text-sm text-surface-500 hidden md:table-cell">{new Date(item.createdAt).toLocaleDateString()}</td>
                     {can('validate') && (
                       <td className="px-4 py-3 text-right">
-                        {item.status === 'draft' && (
+                        {(item.status === 'draft' || item.status === 'ready') && (
                           <button
                             onClick={() => handleValidate(item._id)}
                             className="p-1.5 rounded-lg text-surface-400 hover:text-brand-400 hover:bg-surface-700 transition-colors"
@@ -183,6 +194,22 @@ export default function OperationListPage({
       <Modal isOpen={showForm} onClose={() => setShowForm(false)} title={`New ${title.slice(0, -1)}`} size="lg">
         <form onSubmit={handleCreate} className="space-y-4">
           <div className="grid gap-4 sm:grid-cols-2">
+            {/* Supplier for Receipts */}
+            {isReceipts && (
+              <div className="sm:col-span-2">
+                <label className="label">Supplier *</label>
+                <input type="text" className="input" placeholder="Enter supplier name" value={form.supplier} onChange={(e) => setForm({ ...form, supplier: e.target.value })} required />
+              </div>
+            )}
+
+            {/* Customer for Deliveries */}
+            {isDeliveries && (
+              <div className="sm:col-span-2">
+                <label className="label">Customer *</label>
+                <input type="text" className="input" placeholder="Enter customer name" value={form.customer} onChange={(e) => setForm({ ...form, customer: e.target.value })} required />
+              </div>
+            )}
+
             {showFrom ? (
               <>
                 <div>
@@ -201,7 +228,7 @@ export default function OperationListPage({
                 </div>
               </>
             ) : (
-              <div>
+              <div className={isReceipts || isDeliveries ? '' : 'sm:col-span-2'}>
                 <label className="label">Warehouse *</label>
                 <select className="input" value={form.warehouse} onChange={(e) => setForm({ ...form, warehouse: e.target.value })} required>
                   <option value="">Select</option>
@@ -214,24 +241,24 @@ export default function OperationListPage({
           <div>
             <div className="flex justify-between items-center mb-2">
               <label className="label mb-0">Line Items</label>
-              <Button type="button" variant="outline" onClick={addItem}>
-                <Plus className="h-3 w-3" /> Add Item
+              <Button type="button" variant="outline" onClick={addLine}>
+                <Plus className="h-3 w-3" /> Add Line
               </Button>
             </div>
             <div className="space-y-2">
-              {form.items.map((item, i) => (
+              {form.lines.map((line, i) => (
                 <div key={i} className="flex gap-2 items-end">
                   <div className="flex-1">
-                    <select className="input" value={item.product} onChange={(e) => updateItem(i, 'product', e.target.value)} required>
+                    <select className="input" value={line.product} onChange={(e) => updateLine(i, 'product', e.target.value)} required>
                       <option value="">Product</option>
                       {products.map((p) => <option key={p._id} value={p._id}>{p.name} ({p.sku})</option>)}
                     </select>
                   </div>
                   <div className="w-24">
-                    <input type="number" className="input" min={1} value={item.qty} onChange={(e) => updateItem(i, 'qty', e.target.value)} required />
+                    <input type="number" className="input" min={1} value={line.qty} onChange={(e) => updateLine(i, 'qty', e.target.value)} required />
                   </div>
-                  {form.items.length > 1 && (
-                    <Button type="button" variant="ghost" onClick={() => removeItem(i)} className="text-red-400">✕</Button>
+                  {form.lines.length > 1 && (
+                    <Button type="button" variant="ghost" onClick={() => removeLine(i)} className="text-red-400">✕</Button>
                   )}
                 </div>
               ))}

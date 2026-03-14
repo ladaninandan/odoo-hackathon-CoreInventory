@@ -15,7 +15,7 @@ exports.getDeliveries = async (req, res, next) => {
       Delivery.find(filter)
         .populate('warehouse', 'name code')
         .populate('createdBy', 'name')
-        .populate('items.product', 'name sku')
+        .populate('lines.product', 'name sku')
         .sort({ createdAt: -1 })
         .skip(skip)
         .limit(parseInt(limit, 10)),
@@ -37,7 +37,7 @@ exports.createDelivery = async (req, res, next) => {
     const delivery = await Delivery.create({ ...req.body, createdBy: req.user.id });
     const populated = await delivery.populate([
       { path: 'warehouse', select: 'name code' },
-      { path: 'items.product', select: 'name sku' },
+      { path: 'lines.product', select: 'name sku' },
     ]);
     return sendSuccess(res, 201, 'Delivery created', { delivery: populated });
   } catch (error) {
@@ -52,19 +52,19 @@ exports.validateDelivery = async (req, res, next) => {
   try {
     const delivery = await Delivery.findById(req.params.id).session(session);
     if (!delivery) { await session.abortTransaction(); return sendError(res, 404, 'Delivery not found'); }
-    if (delivery.status === 'validated') { await session.abortTransaction(); return sendError(res, 400, 'Already validated'); }
+    if (delivery.status === 'done') { await session.abortTransaction(); return sendError(res, 400, 'Already validated'); }
 
-    for (const item of delivery.items) {
-      const stock = await getCurrentStock(item.product, delivery.warehouse);
-      if (stock < item.qty) {
+    for (const line of delivery.lines) {
+      const stock = await getCurrentStock(line.product, delivery.warehouse);
+      if (stock < line.qty) {
         await session.abortTransaction();
-        return sendError(res, 400, `Insufficient stock for product ${item.product}. Available: ${stock}`);
+        return sendError(res, 400, `Insufficient stock for product ${line.product}. Available: ${stock}`);
       }
 
       await writeEntry({
-        product: item.product,
+        product: line.product,
         warehouse: delivery.warehouse,
-        qtyChange: -item.qty,
+        qtyChange: -line.qty,
         type: 'delivery',
         refModel: 'Delivery',
         refId: delivery._id,
@@ -73,7 +73,7 @@ exports.validateDelivery = async (req, res, next) => {
       }, session);
     }
 
-    delivery.status = 'validated';
+    delivery.status = 'done';
     delivery.validatedBy = req.user.id;
     delivery.validatedAt = new Date();
     await delivery.save({ session });

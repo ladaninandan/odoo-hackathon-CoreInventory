@@ -37,7 +37,15 @@ const deliverySchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// deliverySchema.index({ deliveryNumber: 1 });
+// Auto-generate deliveryNumber if not provided
+deliverySchema.pre('validate', async function (next) {
+  if (!this.deliveryNumber) {
+    const count = await mongoose.model('Delivery').countDocuments();
+    this.deliveryNumber = `DEL-${String(count + 1).padStart(5, '0')}`;
+  }
+  next();
+});
+
 deliverySchema.index({ status: 1 });
 
 module.exports = mongoose.model('Delivery', deliverySchema);
