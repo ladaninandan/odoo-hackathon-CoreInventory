@@ -5,6 +5,7 @@
 > **v1 Features:** Role-based Access · PDF/Excel Export · Email Alerts · Barcode/QR Scanning
 
 ---
+![Alt text](Pasted image.png)
 
 ## Table of Contents
 
