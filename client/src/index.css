@@ -6,25 +6,27 @@
 
 @layer base {
   body {
-    @apply bg-surface-950 text-surface-100 font-sans antialiased;
+    @apply bg-gray-100 text-gray-900 font-sans antialiased transition-colors duration-200;
+    @apply dark:bg-gray-900 dark:text-gray-100;
   }
 
   * {
-    @apply border-surface-700;
+    @apply border-gray-200 dark:border-gray-700;
   }
 }
 
 @layer components {
   .btn {
-    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-offset-surface-900 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
+    @apply focus:ring-offset-white dark:focus:ring-offset-gray-900;
   }
 
   .btn-primary {
-    @apply btn bg-brand-600 text-white hover:bg-brand-500 focus:ring-brand-500 active:bg-brand-700;
+    @apply btn bg-blue-600 text-white hover:bg-blue-500 focus:ring-blue-500 active:bg-blue-700;
   }
 
   .btn-secondary {
-    @apply btn bg-surface-700 text-surface-100 hover:bg-surface-600 focus:ring-surface-500;
+    @apply btn bg-gray-200 text-gray-800 hover:bg-gray-300 focus:ring-gray-400 dark:bg-gray-700 dark:text-gray-200 dark:hover:bg-gray-600;
   }
 
   .btn-danger {
@@ -32,23 +34,26 @@
   }
 
   .btn-outline {
-    @apply btn border border-surface-600 text-surface-300 hover:bg-surface-800 hover:text-surface-100 focus:ring-surface-500;
+    @apply btn border border-gray-300 bg-white text-gray-700 hover:bg-gray-50 focus:ring-gray-400 dark:border-gray-600 dark:bg-gray-800 dark:text-gray-200 dark:hover:bg-gray-700;
   }
 
   .btn-ghost {
-    @apply btn text-surface-400 hover:text-surface-100 hover:bg-surface-800;
+    @apply btn text-gray-600 hover:bg-gray-100 hover:text-gray-900 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-100;
   }
 
   .card {
-    @apply rounded-xl border border-surface-700/50 bg-surface-800/50 backdrop-blur-sm;
+    @apply rounded-xl border bg-white transition-all duration-200;
+    @apply border-gray-200 shadow-md hover:shadow-lg dark:border-gray-700 dark:bg-gray-800;
   }
 
   .input {
-    @apply w-full rounded-lg border border-surface-600 bg-surface-800 px-3.5 py-2.5 text-sm text-surface-100 placeholder-surface-500 transition-colors focus:border-brand-500 focus:outline-none focus:ring-1 focus:ring-brand-500;
+    @apply w-full rounded-lg border px-3.5 py-2.5 text-sm transition-colors focus:outline-none focus:ring-1;
+    @apply border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500;
+    @apply dark:border-gray-600 dark:bg-gray-800 dark:text-gray-100 dark:placeholder-gray-500 dark:focus:border-blue-400 dark:focus:ring-blue-400;
   }
 
   .label {
-    @apply block text-sm font-medium text-surface-300 mb-1.5;
+    @apply block text-sm font-medium mb-1.5 text-gray-700 dark:text-gray-300;
   }
 
   .badge {
@@ -56,19 +61,52 @@
   }
 
   .badge-success {
-    @apply badge bg-emerald-500/10 text-emerald-400 ring-1 ring-emerald-500/20;
+    @apply badge bg-green-100 text-green-800 ring-1 ring-green-200 dark:bg-green-900/40 dark:text-green-300 dark:ring-green-800;
   }
 
   .badge-warning {
-    @apply badge bg-amber-500/10 text-amber-400 ring-1 ring-amber-500/20;
+    @apply badge bg-amber-100 text-amber-800 ring-1 ring-amber-200 dark:bg-amber-900/40 dark:text-amber-300 dark:ring-amber-800;
   }
 
   .badge-danger {
-    @apply badge bg-red-500/10 text-red-400 ring-1 ring-red-500/20;
+    @apply badge bg-red-100 text-red-800 ring-1 ring-red-200 dark:bg-red-900/40 dark:text-red-300 dark:ring-red-800;
   }
 
   .badge-info {
-    @apply badge bg-blue-500/10 text-blue-400 ring-1 ring-blue-500/20;
+    @apply badge bg-blue-100 text-blue-800 ring-1 ring-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:ring-blue-800;
+  }
+
+  .badge-brand {
+    @apply badge bg-blue-100 text-blue-800 ring-1 ring-blue-200 dark:bg-blue-900/40 dark:text-blue-300 dark:ring-blue-800;
+  }
+
+  /* Auth pages — white panel form (overrides for auth layout) */
+  .auth-form .input {
+    @apply border-gray-300 bg-white text-gray-900 placeholder-gray-400 focus:border-blue-500 focus:ring-blue-500;
+  }
+  .auth-form .label {
+    @apply text-gray-700;
+  }
+  .auth-form .btn-primary,
+  .auth-form .btn {
+    @apply bg-blue-600 text-white hover:bg-blue-500 focus:ring-blue-500;
+  }
+
+  /* Tables inside cards — dark mode */
+  .dark .card thead {
+    @apply bg-gray-700/50 border-gray-700;
+  }
+  .dark .card thead th {
+    @apply text-gray-400;
+  }
+  .dark .card tbody tr {
+    @apply border-gray-700;
+  }
+  .dark .card tbody td {
+    @apply text-gray-300;
+  }
+  .dark .card tbody tr:hover {
+    @apply bg-gray-700/30;
   }
 }
 
@@ -83,9 +121,9 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  @apply bg-surface-600 rounded-full;
+  @apply bg-gray-300 rounded-full dark:bg-gray-600;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  @apply bg-surface-500;
+  @apply bg-gray-400 dark:bg-gray-500;
 }

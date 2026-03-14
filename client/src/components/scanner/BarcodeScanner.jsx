@@ -19,9 +19,9 @@ export default function BarcodeScanner({ onFound }) {
   return (
     <div className="flex flex-col items-center gap-3">
       {scanning && (
-        <div className="relative w-full max-w-md overflow-hidden rounded-lg border border-surface-600">
+        <div className="relative w-full max-w-md overflow-hidden rounded-lg border border-gray-300">
           <video ref={videoRef} className="w-full" />
-          <div className="absolute inset-0 border-2 border-brand-500/30 rounded-lg pointer-events-none" />
+          <div className="absolute inset-0 border-2 border-blue-500/30 rounded-lg pointer-events-none" />
         </div>
       )}
       {error && <p className="text-sm text-red-400">{error}</p>}

@@ -59,4 +59,23 @@ const sendLowStockAlert = async (to, name, items) => {
   });
 };
 
-module.exports = { sendLowStockAlert };
+const sendOtpEmail = async (to, otp) => {
+  const transport = getTransporter();
+  const html = `
+    <h2>CoreInventory — Password Reset</h2>
+    <p>Your one-time code is: <strong>${otp}</strong></p>
+    <p>This code expires in 10 minutes. If you didn't request this, please ignore this email.</p>
+  `;
+  if (!transport) {
+    logger.info(`[EMAIL STUBBED] OTP for ${to}: ${otp}`);
+    return;
+  }
+  await transport.sendMail({
+    from: process.env.ALERT_FROM || process.env.SMTP_USER,
+    to,
+    subject: 'CoreInventory — Your password reset code',
+    html,
+  });
+};
+
+module.exports = { sendLowStockAlert, sendOtpEmail };

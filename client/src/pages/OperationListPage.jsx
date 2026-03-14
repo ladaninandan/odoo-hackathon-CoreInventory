@@ -115,52 +115,52 @@ export default function OperationListPage({
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-surface-700/50">
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Number</th>
-                {isReceipts && <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Supplier</th>}
-                {isDeliveries && <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Customer</th>}
+              <tr className="border-b border-gray-200 bg-gray-50">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Number</th>
+                {isReceipts && <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Supplier</th>}
+                {isDeliveries && <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Customer</th>}
                 {showFrom ? (
                   <>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">From</th>
-                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">To</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">From</th>
+                    <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">To</th>
                   </>
                 ) : (
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Warehouse</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Warehouse</th>
                 )}
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Lines</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Status</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400 hidden md:table-cell">Date</th>
-                {can('validate') && <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-surface-400">Action</th>}
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Lines</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Status</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 hidden md:table-cell">Date</th>
+                {can('validate') && <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Action</th>}
               </tr>
             </thead>
-            <tbody className="divide-y divide-surface-700/30">
+            <tbody className="divide-y divide-gray-200">
               {loading ? (
-                <tr><td colSpan={8} className="px-4 py-12 text-center text-sm text-surface-500">Loading...</td></tr>
+                <tr><td colSpan={8} className="px-4 py-12 text-center text-sm text-gray-500">Loading...</td></tr>
               ) : items.length === 0 ? (
-                <tr><td colSpan={8} className="px-4 py-12 text-center text-sm text-surface-500">No records found</td></tr>
+                <tr><td colSpan={8} className="px-4 py-12 text-center text-sm text-gray-500">No records found</td></tr>
               ) : (
                 items.map((item) => (
-                  <tr key={item._id} className="hover:bg-surface-700/20 transition-colors">
-                    <td className="px-4 py-3 text-sm font-mono text-surface-100">{item[numberField]}</td>
-                    {isReceipts && <td className="px-4 py-3 text-sm text-surface-300">{item.supplier || '—'}</td>}
-                    {isDeliveries && <td className="px-4 py-3 text-sm text-surface-300">{item.customer || '—'}</td>}
+                  <tr key={item._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 text-sm font-mono text-gray-900">{item[numberField]}</td>
+                    {isReceipts && <td className="px-4 py-3 text-sm text-gray-600">{item.supplier || '—'}</td>}
+                    {isDeliveries && <td className="px-4 py-3 text-sm text-gray-600">{item.customer || '—'}</td>}
                     {showFrom ? (
                       <>
-                        <td className="px-4 py-3 text-sm text-surface-300">{item.fromWarehouse?.name}</td>
-                        <td className="px-4 py-3 text-sm text-surface-300">{item.toWarehouse?.name}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{item.fromWarehouse?.name}</td>
+                        <td className="px-4 py-3 text-sm text-gray-600">{item.toWarehouse?.name}</td>
                       </>
                     ) : (
-                      <td className="px-4 py-3 text-sm text-surface-300">{item[warehouseField]?.name}</td>
+                      <td className="px-4 py-3 text-sm text-gray-600">{item[warehouseField]?.name}</td>
                     )}
-                    <td className="px-4 py-3 text-sm text-surface-400">{item.lines?.length || 0} line(s)</td>
+                    <td className="px-4 py-3 text-sm text-gray-500">{item.lines?.length || 0} line(s)</td>
                     <td className="px-4 py-3"><Badge variant={statusColors[item.status]}>{item.status}</Badge></td>
-                    <td className="px-4 py-3 text-sm text-surface-500 hidden md:table-cell">{new Date(item.createdAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 hidden md:table-cell">{new Date(item.createdAt).toLocaleDateString()}</td>
                     {can('validate') && (
                       <td className="px-4 py-3 text-right">
                         {(item.status === 'draft' || item.status === 'ready') && (
                           <button
                             onClick={() => handleValidate(item._id)}
-                            className="p-1.5 rounded-lg text-surface-400 hover:text-brand-400 hover:bg-surface-700 transition-colors"
+                            className="p-1.5 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors"
                             aria-label="Validate"
                           >
                             <CheckCircle className="h-4 w-4" />
@@ -176,8 +176,8 @@ export default function OperationListPage({
         </div>
 
         {pagination.pages > 1 && (
-          <div className="flex items-center justify-between border-t border-surface-700/50 px-4 py-3">
-            <p className="text-sm text-surface-400">Page {pagination.page} of {pagination.pages}</p>
+          <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
+            <p className="text-sm text-gray-500">Page {pagination.page} of {pagination.pages}</p>
             <div className="flex gap-2">
               <Button variant="outline" disabled={pagination.page <= 1} onClick={() => dispatch(fetchAction({ status: statusFilter, page: pagination.page - 1, limit: pagination.limit }))}>
                 <ChevronLeft className="h-4 w-4" />

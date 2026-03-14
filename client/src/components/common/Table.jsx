@@ -4,11 +4,11 @@ export default function Table({ columns, data, onRowClick, emptyMessage = 'No da
       <div className="overflow-x-auto">
         <table className="w-full">
           <thead>
-            <tr className="border-b border-surface-700/50">
+            <tr className="border-b border-gray-200 bg-gray-50">
               {columns.map((col) => (
                 <th
                   key={col.key}
-                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400"
+                  className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500"
                   style={col.width ? { width: col.width } : undefined}
                 >
                   {col.label}
@@ -16,12 +16,12 @@ export default function Table({ columns, data, onRowClick, emptyMessage = 'No da
               ))}
             </tr>
           </thead>
-          <tbody className="divide-y divide-surface-700/30">
+          <tbody className="divide-y divide-gray-200">
             {data.length === 0 ? (
               <tr>
                 <td
                   colSpan={columns.length}
-                  className="px-4 py-12 text-center text-sm text-surface-500"
+                  className="px-4 py-12 text-center text-sm text-gray-500"
                 >
                   {emptyMessage}
                 </td>
@@ -33,12 +33,12 @@ export default function Table({ columns, data, onRowClick, emptyMessage = 'No da
                   onClick={() => onRowClick?.(row)}
                   className={`transition-colors ${
                     onRowClick
-                      ? 'cursor-pointer hover:bg-surface-700/30'
+                      ? 'cursor-pointer hover:bg-gray-50'
                       : ''
                   }`}
                 >
                   {columns.map((col) => (
-                    <td key={col.key} className="px-4 py-3 text-sm text-surface-200">
+                    <td key={col.key} className="px-4 py-3 text-sm text-gray-900">
                       {col.render ? col.render(row[col.key], row) : row[col.key]}
                     </td>
                   ))}

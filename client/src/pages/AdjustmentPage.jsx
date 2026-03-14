@@ -49,31 +49,31 @@ export default function AdjustmentPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-surface-700/50">
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Product</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Warehouse</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Qty Change</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400 hidden md:table-cell">Reason</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400 hidden md:table-cell">By</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400 hidden lg:table-cell">Date</th>
+              <tr className="border-b border-gray-200 bg-gray-50">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Product</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Warehouse</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Qty Change</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 hidden md:table-cell">Reason</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 hidden md:table-cell">By</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 hidden lg:table-cell">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-surface-700/30">
+            <tbody className="divide-y divide-gray-200">
               {loading ? (
-                <tr><td colSpan={6} className="px-4 py-12 text-center text-sm text-surface-500">Loading...</td></tr>
+                <tr><td colSpan={6} className="px-4 py-12 text-center text-sm text-gray-500">Loading...</td></tr>
               ) : items.length === 0 ? (
-                <tr><td colSpan={6} className="px-4 py-12 text-center text-sm text-surface-500">No adjustments</td></tr>
+                <tr><td colSpan={6} className="px-4 py-12 text-center text-sm text-gray-500">No adjustments</td></tr>
               ) : (
                 items.map((a) => (
-                  <tr key={a._id} className="hover:bg-surface-700/20 transition-colors">
-                    <td className="px-4 py-3 text-sm text-surface-100">{a.product?.name}</td>
-                    <td className="px-4 py-3 text-sm text-surface-300">{a.warehouse?.name}</td>
-                    <td className={`px-4 py-3 text-sm font-mono font-semibold ${a.qtyChange > 0 ? 'text-brand-400' : 'text-red-400'}`}>
+                  <tr key={a._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 text-sm text-gray-900">{a.product?.name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{a.warehouse?.name}</td>
+                    <td className={`px-4 py-3 text-sm font-mono font-semibold ${a.qtyChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {a.qtyChange > 0 ? `+${a.qtyChange}` : a.qtyChange}
                     </td>
-                    <td className="px-4 py-3 text-sm text-surface-400 hidden md:table-cell">{a.reason}</td>
-                    <td className="px-4 py-3 text-sm text-surface-400 hidden md:table-cell">{a.adjustedBy?.name}</td>
-                    <td className="px-4 py-3 text-sm text-surface-500 hidden lg:table-cell">{new Date(a.createdAt).toLocaleDateString()}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 hidden md:table-cell">{a.reason}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 hidden md:table-cell">{a.adjustedBy?.name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 hidden lg:table-cell">{new Date(a.createdAt).toLocaleDateString()}</td>
                   </tr>
                 ))
               )}
@@ -82,8 +82,8 @@ export default function AdjustmentPage() {
         </div>
 
         {pagination.pages > 1 && (
-          <div className="flex items-center justify-between border-t border-surface-700/50 px-4 py-3">
-            <p className="text-sm text-surface-400">Page {pagination.page} of {pagination.pages}</p>
+          <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
+            <p className="text-sm text-gray-500">Page {pagination.page} of {pagination.pages}</p>
             <div className="flex gap-2">
               <Button variant="outline" disabled={pagination.page <= 1} onClick={() => dispatch(fetchAdjustments({ page: pagination.page - 1, limit: pagination.limit }))}>
                 <ChevronLeft className="h-4 w-4" />
@@ -113,7 +113,7 @@ export default function AdjustmentPage() {
             </select>
           </div>
           <div>
-            <label className="label">Quantity Change * <span className="text-surface-500">(use negative to reduce)</span></label>
+            <label className="label">Quantity Change * <span className="text-gray-500">(use negative to reduce)</span></label>
             <input type="number" className="input font-mono" value={form.qtyChange} onChange={(e) => setForm({ ...form, qtyChange: e.target.value })} required />
           </div>
           <div>

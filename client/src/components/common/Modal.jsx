@@ -37,15 +37,15 @@ export default function Modal({ isOpen, onClose, title, children, size = 'md' })
               leaveTo="opacity-0 scale-95"
             >
               <Dialog.Panel
-                className={`w-full ${sizeClasses[size]} transform rounded-xl border border-surface-700/50 bg-surface-800 p-6 shadow-2xl transition-all`}
+                className={`w-full ${sizeClasses[size]} transform rounded-xl border border-gray-200 bg-white p-6 shadow-2xl transition-all dark:border-gray-700 dark:bg-gray-800`}
               >
                 <div className="flex items-center justify-between mb-4">
-                  <Dialog.Title className="text-lg font-semibold text-white">
+                  <Dialog.Title className="text-lg font-semibold text-gray-900 dark:text-gray-100">
                     {title}
                   </Dialog.Title>
                   <button
                     onClick={onClose}
-                    className="rounded-lg p-1 text-surface-400 hover:bg-surface-700 hover:text-surface-100 transition-colors"
+                    className="rounded-lg p-1 text-gray-500 hover:bg-gray-100 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-700 dark:hover:text-gray-200 transition-colors"
                     aria-label="Close"
                   >
                     <X className="h-5 w-5" />

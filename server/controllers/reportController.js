@@ -96,6 +96,30 @@ exports.getDashboardData = async (req, res, next) => {
       { $project: { name: { $ifNull: ['$product.name', 'Unknown Product'] }, totalMovement: 1, _id: 0 } },
     ]);
 
+    // Recent operations (receipts, deliveries, transfers)
+    const [recentReceipts, recentDeliveries, recentTransfers] = await Promise.all([
+      Receipt.find().sort({ createdAt: -1 }).limit(5).lean(),
+      Delivery.find().sort({ createdAt: -1 }).limit(5).lean(),
+      Transfer.find().sort({ createdAt: -1 }).limit(5).populate('fromWarehouse toWarehouse', 'name').lean(),
+    ]);
+    const mapRef = (r) => ({ reference: r.receiptNumber || r._id.toString(), type: 'Receipt', sourceDestination: r.supplier, date: r.createdAt, status: r.status, id: r._id });
+    const mapDel = (d) => ({ reference: d.deliveryNumber || d._id.toString(), type: 'Delivery', sourceDestination: d.customer, date: d.createdAt, status: d.status, id: d._id });
+    const mapTr = (t) => {
+      const from = t.fromWarehouse?.name || 'Source';
+      const to = t.toWarehouse?.name || 'Dest';
+      return { reference: t.transferNumber || t._id.toString(), type: 'Internal', sourceDestination: `${from} — ${to}`, date: t.createdAt, status: t.status, id: t._id };
+    };
+    const recentOperations = [
+      ...recentReceipts.map(mapRef),
+      ...recentDeliveries.map(mapDel),
+      ...recentTransfers.map(mapTr),
+    ]
+      .sort((a, b) => new Date(b.date) - new Date(a.date))
+      .slice(0, 10);
+
+    // Critical alerts (out of stock / low stock)
+    const criticalAlerts = lowStockItems.slice(0, 5).map((p) => ({ message: `${p.sku || p.name} out of stock`, sku: p.sku }));
+
     return sendSuccess(res, 200, 'Dashboard data', {
       kpi: {
         totalProducts,
@@ -111,6 +135,8 @@ exports.getDashboardData = async (req, res, next) => {
         stockByWarehouse,
         topProducts,
       },
+      recentOperations,
+      criticalAlerts,
     });
   } catch (error) {
     next(error);

@@ -13,6 +13,18 @@ const typeColors = {
   transfer_out: 'info',
 };
 
+function formatType(value) {
+  if (!value) return '—';
+  const labels = {
+    receipt: 'Receipt',
+    delivery: 'Delivery',
+    adjustment: 'Adjustment',
+    transfer_in: 'Transfer In',
+    transfer_out: 'Transfer Out',
+  };
+  return labels[value] || value.replace(/_/g, ' ');
+}
+
 export default function HistoryPage() {
   const [entries, setEntries] = useState([]);
   const [pagination, setPagination] = useState({ page: 1, total: 0, limit: 30, pages: 0 });
@@ -73,33 +85,33 @@ export default function HistoryPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-surface-700/50">
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Product</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Warehouse</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Type</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Qty Change</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400 hidden md:table-cell">Note</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400 hidden md:table-cell">By</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400 hidden lg:table-cell">Date</th>
+              <tr className="border-b border-gray-200 bg-gray-50">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Product</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Warehouse</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Type</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Qty Change</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 hidden md:table-cell">Note</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 hidden md:table-cell">By</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 hidden lg:table-cell">Date</th>
               </tr>
             </thead>
-            <tbody className="divide-y divide-surface-700/30">
+            <tbody className="divide-y divide-gray-200">
               {loading ? (
-                <tr><td colSpan={7} className="px-4 py-12 text-center text-sm text-surface-500">Loading...</td></tr>
+                <tr><td colSpan={7} className="px-4 py-12 text-center text-sm text-gray-500">Loading...</td></tr>
               ) : entries.length === 0 ? (
-                <tr><td colSpan={7} className="px-4 py-12 text-center text-sm text-surface-500">No entries found</td></tr>
+                <tr><td colSpan={7} className="px-4 py-12 text-center text-sm text-gray-500">No entries found</td></tr>
               ) : (
                 entries.map((e) => (
-                  <tr key={e._id} className="hover:bg-surface-700/20 transition-colors">
-                    <td className="px-4 py-3 text-sm text-surface-100">{e.product?.name}</td>
-                    <td className="px-4 py-3 text-sm text-surface-300">{e.warehouse?.name}</td>
-                    <td className="px-4 py-3"><Badge variant={typeColors[e.type] || 'info'}>{e.type}</Badge></td>
-                    <td className={`px-4 py-3 text-sm font-mono font-semibold ${e.qtyChange > 0 ? 'text-brand-400' : 'text-red-400'}`}>
+                  <tr key={e._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 text-sm text-gray-900">{e.product?.name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{e.warehouse?.name}</td>
+                    <td className="px-4 py-3"><Badge variant={typeColors[e.movementType || e.type] || 'info'}>{formatType(e.movementType || e.type)}</Badge></td>
+                    <td className={`px-4 py-3 text-sm font-mono font-semibold ${e.qtyChange > 0 ? 'text-green-600' : 'text-red-600'}`}>
                       {e.qtyChange > 0 ? `+${e.qtyChange}` : e.qtyChange}
                     </td>
-                    <td className="px-4 py-3 text-sm text-surface-400 hidden md:table-cell truncate max-w-[200px]">{e.note}</td>
-                    <td className="px-4 py-3 text-sm text-surface-400 hidden md:table-cell">{e.performedBy?.name}</td>
-                    <td className="px-4 py-3 text-sm text-surface-500 hidden lg:table-cell">{new Date(e.createdAt).toLocaleString()}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 hidden md:table-cell truncate max-w-[200px]">{e.note}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 hidden md:table-cell">{e.performedBy?.name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 hidden lg:table-cell">{new Date(e.createdAt).toLocaleString()}</td>
                   </tr>
                 ))
               )}
@@ -108,8 +120,8 @@ export default function HistoryPage() {
         </div>
 
         {pagination.pages > 1 && (
-          <div className="flex items-center justify-between border-t border-surface-700/50 px-4 py-3">
-            <p className="text-sm text-surface-400">Page {pagination.page} of {pagination.pages}</p>
+          <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
+            <p className="text-sm text-gray-500">Page {pagination.page} of {pagination.pages}</p>
             <div className="flex gap-2">
               <Button variant="outline" disabled={pagination.page <= 1} onClick={() => fetchEntries(pagination.page - 1)}>
                 <ChevronLeft className="h-4 w-4" />

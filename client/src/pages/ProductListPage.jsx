@@ -80,7 +80,7 @@ export default function ProductListPage() {
       {/* Filters */}
       <div className="card p-4 flex flex-col sm:flex-row gap-3">
         <form onSubmit={handleSearch} className="flex-1 relative">
-          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-surface-500" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
           <input
             type="text"
             className="input pl-10"
@@ -115,35 +115,35 @@ export default function ProductListPage() {
         <div className="overflow-x-auto">
           <table className="w-full">
             <thead>
-              <tr className="border-b border-surface-700/50">
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Product</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">SKU</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400 hidden md:table-cell">Category</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400 hidden lg:table-cell">UOM</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Min Stock</th>
-                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Status</th>
+              <tr className="border-b border-gray-200 bg-gray-50">
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Product</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">SKU</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 hidden md:table-cell">Category</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 hidden lg:table-cell">UOM</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Min Stock</th>
+                <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Status</th>
                 {can('edit_product') && (
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-surface-400">Actions</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Actions</th>
                 )}
               </tr>
             </thead>
-            <tbody className="divide-y divide-surface-700/30">
+            <tbody className="divide-y divide-gray-200">
               {loading ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-sm text-surface-500">Loading...</td>
+                  <td colSpan={7} className="px-4 py-12 text-center text-sm text-gray-500">Loading...</td>
                 </tr>
               ) : items.length === 0 ? (
                 <tr>
-                  <td colSpan={7} className="px-4 py-12 text-center text-sm text-surface-500">No products found</td>
+                  <td colSpan={7} className="px-4 py-12 text-center text-sm text-gray-500">No products found</td>
                 </tr>
               ) : (
                 items.map((p) => (
-                  <tr key={p._id} className="hover:bg-surface-700/20 transition-colors">
-                    <td className="px-4 py-3 text-sm font-medium text-surface-100">{p.name}</td>
-                    <td className="px-4 py-3 text-sm text-surface-300 font-mono">{p.sku}</td>
-                    <td className="px-4 py-3 text-sm text-surface-300 hidden md:table-cell">{p.category?.name}</td>
-                    <td className="px-4 py-3 text-sm text-surface-400 hidden lg:table-cell">{p.uom}</td>
-                    <td className="px-4 py-3 text-sm text-surface-300">{p.minStockLevel}</td>
+                  <tr key={p._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{p.name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 font-mono">{p.sku}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 hidden md:table-cell">{p.category?.name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-500 hidden lg:table-cell">{p.uom}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600">{p.minStockLevel}</td>
                     <td className="px-4 py-3">
                       <Badge variant={p.isActive ? 'success' : 'danger'}>
                         {p.isActive ? 'Active' : 'Inactive'}
@@ -154,14 +154,14 @@ export default function ProductListPage() {
                         <div className="flex items-center justify-end gap-1">
                           <button
                             onClick={() => { setEditProduct(p); setShowForm(true); }}
-                            className="p-1.5 rounded-lg text-surface-400 hover:text-brand-400 hover:bg-surface-700 transition-colors"
+                            className="p-1.5 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors"
                             aria-label="Edit product"
                           >
                             <Edit className="h-4 w-4" />
                           </button>
                           <button
                             onClick={() => handleDelete(p._id)}
-                            className="p-1.5 rounded-lg text-surface-400 hover:text-red-400 hover:bg-surface-700 transition-colors"
+                            className="p-1.5 rounded-lg text-gray-500 hover:text-red-600 hover:bg-gray-100 transition-colors"
                             aria-label="Delete product"
                           >
                             <Trash2 className="h-4 w-4" />
@@ -178,8 +178,8 @@ export default function ProductListPage() {
 
         {/* Pagination */}
         {pagination.pages > 1 && (
-          <div className="flex items-center justify-between border-t border-surface-700/50 px-4 py-3">
-            <p className="text-sm text-surface-400">
+          <div className="flex items-center justify-between border-t border-gray-200 bg-gray-50 px-4 py-3">
+            <p className="text-sm text-gray-500">
               Page {pagination.page} of {pagination.pages}
             </p>
             <div className="flex gap-2">

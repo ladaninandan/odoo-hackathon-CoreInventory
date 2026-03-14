@@ -38,7 +38,7 @@ function CategoryTab() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-white">Categories</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Categories</h3>
         <Button onClick={() => { setEditItem(null); setForm({ name: '', description: '' }); setShowForm(true); }}>
           <Plus className="h-4 w-4" /> Add
         </Button>
@@ -47,12 +47,12 @@ function CategoryTab() {
         {categories.map((c) => (
           <div key={c._id} className="card p-4 flex justify-between items-center">
             <div>
-              <p className="font-medium text-surface-100">{c.name}</p>
-              {c.description && <p className="text-xs text-surface-500 mt-0.5">{c.description}</p>}
+              <p className="font-medium text-gray-900">{c.name}</p>
+              {c.description && <p className="text-xs text-gray-500 mt-0.5">{c.description}</p>}
             </div>
             <button
               onClick={() => { setEditItem(c); setForm({ name: c.name, description: c.description || '' }); setShowForm(true); }}
-              className="p-1.5 rounded-lg text-surface-400 hover:text-brand-400 hover:bg-surface-700 transition-colors"
+              className="p-1.5 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors"
               aria-label="Edit category"
             >
               <Edit className="h-4 w-4" />
@@ -60,7 +60,7 @@ function CategoryTab() {
           </div>
         ))}
         {categories.length === 0 && (
-          <p className="text-sm text-surface-500 col-span-full">No categories yet. Create one to get started.</p>
+          <p className="text-sm text-gray-500 col-span-full">No categories yet. Create one to get started.</p>
         )}
       </div>
       <Modal isOpen={showForm} onClose={() => setShowForm(false)} title={editItem ? 'Edit Category' : 'Add Category'}>
@@ -114,7 +114,7 @@ function WarehouseTab() {
   return (
     <div>
       <div className="flex justify-between items-center mb-4">
-        <h3 className="text-lg font-semibold text-white">Warehouses</h3>
+        <h3 className="text-lg font-semibold text-gray-900">Warehouses</h3>
         <Button onClick={() => { setEditItem(null); setForm({ name: '', code: '', type: 'primary', address: '' }); setShowForm(true); }}>
           <Plus className="h-4 w-4" /> Add
         </Button>
@@ -124,15 +124,15 @@ function WarehouseTab() {
           <div key={w._id} className="card p-4">
             <div className="flex justify-between items-start">
               <div>
-                <p className="font-medium text-surface-100">{w.name}</p>
-                <p className="text-xs text-surface-500 font-mono mt-0.5">{w.code}</p>
-                {w.address && <p className="text-xs text-surface-500 mt-1">{w.address}</p>}
+                <p className="font-medium text-gray-900">{w.name}</p>
+                <p className="text-xs text-gray-500 font-mono mt-0.5">{w.code}</p>
+                {w.address && <p className="text-xs text-gray-500 mt-1">{w.address}</p>}
               </div>
               <div className="flex items-center gap-2">
                 <Badge variant={typeColors[w.type]}>{w.type}</Badge>
                 <button
                   onClick={() => { setEditItem(w); setForm({ name: w.name, code: w.code, type: w.type, address: w.address || '' }); setShowForm(true); }}
-                  className="p-1.5 rounded-lg text-surface-400 hover:text-brand-400 hover:bg-surface-700 transition-colors"
+                  className="p-1.5 rounded-lg text-gray-500 hover:text-blue-600 hover:bg-gray-100 transition-colors"
                   aria-label="Edit warehouse"
                 >
                   <Edit className="h-4 w-4" />
@@ -142,7 +142,7 @@ function WarehouseTab() {
           </div>
         ))}
         {warehouses.length === 0 && (
-          <p className="text-sm text-surface-500 col-span-full">No warehouses yet. Create one to get started.</p>
+          <p className="text-sm text-gray-500 col-span-full">No warehouses yet. Create one to get started.</p>
         )}
       </div>
       <Modal isOpen={showForm} onClose={() => setShowForm(false)} title={editItem ? 'Edit Warehouse' : 'Add Warehouse'}>
@@ -228,15 +228,15 @@ export default function SettingsPage() {
   return (
     <PageWrapper title="Settings" description="Manage categories, warehouses, and users">
       {/* Tabs */}
-      <div className="flex gap-1 border-b border-surface-700/50 mb-6">
+      <div className="flex gap-1 border-b border-gray-200 mb-6">
         {tabs.map(({ key, label, icon: Icon }) => (
           <button
             key={key}
             onClick={() => setActiveTab(key)}
             className={`flex items-center gap-2 px-4 py-2.5 text-sm font-medium border-b-2 transition-colors ${
               activeTab === key
-                ? 'border-brand-500 text-brand-400'
-                : 'border-transparent text-surface-400 hover:text-surface-200'
+                ? 'border-blue-600 text-blue-600'
+                : 'border-transparent text-gray-500 hover:text-gray-700'
             }`}
           >
             <Icon className="h-4 w-4" />
@@ -249,26 +249,26 @@ export default function SettingsPage() {
       {activeTab === 'warehouses' && <WarehouseTab />}
       {activeTab === 'users' && (
         <div>
-          <h3 className="text-lg font-semibold text-white mb-4">Users</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">Users</h3>
           <div className="card overflow-hidden">
             <table className="w-full">
               <thead>
-                <tr className="border-b border-surface-700/50">
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Name</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400 hidden sm:table-cell">Email</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Role</th>
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-surface-400">Status</th>
-                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-surface-400">Action</th>
+                <tr className="border-b border-gray-200 bg-gray-50">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Name</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500 hidden sm:table-cell">Email</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Role</th>
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wider text-gray-500">Status</th>
+                  <th className="px-4 py-3 text-right text-xs font-semibold uppercase tracking-wider text-gray-500">Action</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-surface-700/30">
+              <tbody className="divide-y divide-gray-200">
                 {users.map((u) => (
-                  <tr key={u._id} className="hover:bg-surface-700/20 transition-colors">
-                    <td className="px-4 py-3 text-sm font-medium text-surface-100">{u.name}</td>
-                    <td className="px-4 py-3 text-sm text-surface-300 hidden sm:table-cell">{u.email}</td>
+                  <tr key={u._id} className="hover:bg-gray-50 transition-colors">
+                    <td className="px-4 py-3 text-sm font-medium text-gray-900">{u.name}</td>
+                    <td className="px-4 py-3 text-sm text-gray-600 hidden sm:table-cell">{u.email}</td>
                     <td className="px-4 py-3">
                       <select 
-                        className="input py-1 px-2 text-sm bg-surface-800 border-none w-auto outline-none focus:ring-1 focus:ring-brand-500 rounded-lg cursor-pointer transition-colors hover:bg-surface-700" 
+                        className="input py-1 px-2 text-sm bg-white border border-gray-300 w-auto rounded-lg cursor-pointer focus:ring-blue-500 focus:border-blue-500" 
                         value={u.role} 
                         onChange={(e) => updateUserRole(u._id, e.target.value)}
                         title="Change user role"

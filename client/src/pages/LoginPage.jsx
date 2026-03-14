@@ -4,12 +4,14 @@ import { Link, useNavigate } from 'react-router-dom';
 import { loginUser, clearError } from '../features/auth/authSlice';
 import { Box, Eye, EyeOff, LogIn } from 'lucide-react';
 import Button from '../components/common/Button';
+import AuthLayout from '../components/layout/AuthLayout';
 
 export default function LoginPage() {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { loading, error } = useSelector((state) => state.auth);
   const [showPassword, setShowPassword] = useState(false);
+  const [remember, setRemember] = useState(false);
   const [form, setForm] = useState({ email: '', password: '' });
 
   const handleSubmit = async (e) => {
@@ -22,89 +24,106 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-surface-950 px-4">
-      <div className="w-full max-w-md">
-        {/* Logo */}
-        <div className="mb-8 text-center">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-brand-600 shadow-lg shadow-brand-600/20">
-            <Box className="h-7 w-7 text-white" />
+    <AuthLayout>
+      <div className="w-full max-w-md mx-auto auth-form">
+        <div className="mb-8">
+          <div className="flex items-center gap-3 mb-8 lg:hidden">
+            <div className="flex h-10 w-10 items-center justify-center rounded-lg bg-blue-600">
+              <Box className="h-6 w-6 text-white" />
+            </div>
+            <span className="text-xl font-bold text-gray-900">CoreInventory</span>
           </div>
-          <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-          <p className="mt-1 text-sm text-surface-400">
-            Sign in to your CoreInventory account
+          <h1 className="text-2xl font-bold text-gray-900">Welcome Back</h1>
+          <p className="mt-1 text-sm text-gray-500">
+            Please enter your credentials to access your dashboard.
           </p>
         </div>
 
-        {/* Form card */}
-        <div className="card p-6">
-          {error && (
-            <div className="mb-4 rounded-lg bg-red-500/10 border border-red-500/20 px-4 py-3 text-sm text-red-400">
-              {error}
-            </div>
-          )}
+        {error && (
+          <div className="mb-4 rounded-lg bg-red-50 border border-red-200 px-4 py-3 text-sm text-red-600">
+            {error}
+          </div>
+        )}
 
-          <form onSubmit={handleSubmit} className="space-y-4">
-            <div>
-              <label htmlFor="login-email" className="label">Email</label>
+        <form onSubmit={handleSubmit} className="space-y-4">
+          <div>
+            <label htmlFor="login-email" className="label">Email Address</label>
+            <input
+              id="login-email"
+              type="email"
+              className="input"
+              placeholder="name@company.com"
+              value={form.email}
+              onChange={(e) => setForm({ ...form, email: e.target.value })}
+              required
+              autoComplete="email"
+            />
+          </div>
+
+          <div>
+            <div className="flex items-center justify-between">
+              <label htmlFor="login-password" className="label">Password</label>
+              <Link
+                to="/forgot-password"
+                className="text-xs text-blue-600 hover:text-blue-500 transition-colors"
+              >
+                Forgot Password?
+              </Link>
+            </div>
+            <div className="relative">
               <input
-                id="login-email"
-                type="email"
-                className="input"
-                placeholder="you@example.com"
-                value={form.email}
-                onChange={(e) => setForm({ ...form, email: e.target.value })}
+                id="login-password"
+                type={showPassword ? 'text' : 'password'}
+                className="input pr-10"
+                placeholder="••••••••"
+                value={form.password}
+                onChange={(e) => setForm({ ...form, password: e.target.value })}
                 required
-                autoComplete="email"
+                minLength={8}
+                autoComplete="current-password"
               />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+                aria-label={showPassword ? 'Hide password' : 'Show password'}
+              >
+                {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              </button>
             </div>
+          </div>
 
-            <div>
-              <div className="flex items-center justify-between">
-                <label htmlFor="login-password" className="label">Password</label>
-                <Link
-                  to="/forgot-password"
-                  className="text-xs text-brand-400 hover:text-brand-300 transition-colors"
-                >
-                  Forgot password?
-                </Link>
-              </div>
-              <div className="relative">
-                <input
-                  id="login-password"
-                  type={showPassword ? 'text' : 'password'}
-                  className="input pr-10"
-                  placeholder="••••••••"
-                  value={form.password}
-                  onChange={(e) => setForm({ ...form, password: e.target.value })}
-                  required
-                  minLength={8}
-                  autoComplete="current-password"
-                />
-                <button
-                  type="button"
-                  onClick={() => setShowPassword(!showPassword)}
-                  className="absolute right-3 top-1/2 -translate-y-1/2 text-surface-500 hover:text-surface-300"
-                  aria-label={showPassword ? 'Hide password' : 'Show password'}
-                >
-                  {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                </button>
-              </div>
-            </div>
+          <label className="flex items-center gap-2 cursor-pointer">
+            <input
+              type="checkbox"
+              checked={remember}
+              onChange={(e) => setRemember(e.target.checked)}
+              className="rounded border-gray-300 text-blue-600 focus:ring-blue-500"
+            />
+            <span className="text-sm text-gray-600">Remember this device</span>
+          </label>
 
-            <Button type="submit" loading={loading} className="w-full">
-              <LogIn className="h-4 w-4" />
-              Sign in
-            </Button>
-          </form>
+          <Button type="submit" loading={loading} className="w-full bg-blue-600 hover:bg-blue-500 text-white">
+            <LogIn className="h-4 w-4" />
+            Sign In to CoreInventory
+          </Button>
+        </form>
 
-          <p className="mt-6 text-center text-sm text-surface-400">
-            Don&apos;t have an account?{' '}
-            <Link to="/register" className="text-brand-400 hover:text-brand-300 font-medium transition-colors">
-              Create account
-            </Link>
-          </p>
-        </div>
+        <p className="mt-6 text-center text-sm text-gray-600">
+          Don&apos;t have an account yet?{' '}
+          <Link to="/register" className="text-blue-600 hover:text-blue-500 font-medium">
+            Request Access
+          </Link>
+        </p>
+
+        <footer className="mt-12 pt-6 border-t border-gray-200 flex flex-wrap items-center justify-between gap-2 text-xs text-gray-400">
+          <span>© 2023 CoreInventory Solutions Inc.</span>
+          <div className="flex gap-4">
+            <a href="#" className="hover:text-gray-600">Privacy Policy</a>
+            <a href="#" className="hover:text-gray-600">Support</a>
+          </div>
+        </footer>
       </div>
-    </div>
+    </AuthLayout>
   );
 }

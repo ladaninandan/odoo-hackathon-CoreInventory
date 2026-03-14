@@ -43,12 +43,12 @@ export default function ReportsPage() {
         {/* Stock Summary PDF */}
         <div className="card p-5 flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-red-600/20 p-3">
-              <FileDown className="h-6 w-6 text-red-400" />
+            <div className="rounded-xl bg-red-100 p-3">
+              <FileDown className="h-6 w-6 text-red-600" />
             </div>
             <div>
-              <h3 className="font-semibold text-white">Stock Summary PDF</h3>
-              <p className="text-xs text-surface-400">Current stock levels across all warehouses</p>
+              <h3 className="font-semibold text-gray-900">Stock Summary PDF</h3>
+              <p className="text-xs text-gray-500">Current stock levels across all warehouses</p>
             </div>
           </div>
           <Button variant="outline" onClick={() => handleExport('pdf')} disabled={!!loading}>
@@ -60,12 +60,12 @@ export default function ReportsPage() {
         {/* Stock Summary Excel */}
         <div className="card p-5 flex flex-col gap-3">
           <div className="flex items-center gap-3">
-            <div className="rounded-xl bg-green-600/20 p-3">
-              <FileSpreadsheet className="h-6 w-6 text-green-400" />
+            <div className="rounded-xl bg-green-100 p-3">
+              <FileSpreadsheet className="h-6 w-6 text-green-600" />
             </div>
             <div>
-              <h3 className="font-semibold text-white">Stock Summary Excel</h3>
-              <p className="text-xs text-surface-400">Full stock data in spreadsheet format</p>
+              <h3 className="font-semibold text-gray-900">Stock Summary Excel</h3>
+              <p className="text-xs text-gray-500">Full stock data in spreadsheet format</p>
             </div>
           </div>
           <Button variant="outline" onClick={() => handleExport('excel')} disabled={!!loading}>

@@ -9,7 +9,7 @@ exports.getLedgerEntries = async (req, res, next) => {
 
     if (product) filter.product = product;
     if (warehouse) filter.warehouse = warehouse;
-    if (type && type !== 'all') filter.type = type;
+    if (type && type !== 'all') filter.movementType = type;
     if (startDate || endDate) {
       filter.createdAt = {};
       if (startDate) filter.createdAt.$gte = new Date(startDate);

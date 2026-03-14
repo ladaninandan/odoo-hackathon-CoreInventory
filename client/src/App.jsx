@@ -3,6 +3,7 @@ import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import { Toaster } from 'react-hot-toast';
 import { getMe } from './features/auth/authSlice';
+import { useTheme } from './contexts/ThemeContext';
 import Sidebar from './components/layout/Sidebar';
 import Topbar from './components/layout/Topbar';
 import ProtectedRoute from './components/common/ProtectedRoute';
@@ -29,8 +30,8 @@ function UnauthorizedPage() {
   return (
     <div className="flex h-64 items-center justify-center">
       <div className="text-center">
-        <h2 className="text-xl font-semibold text-red-400">Access Denied</h2>
-        <p className="mt-2 text-sm text-surface-400">
+        <h2 className="text-xl font-semibold text-red-600">Access Denied</h2>
+        <p className="mt-2 text-sm text-gray-500">
           You don&apos;t have permission to view this page.
         </p>
       </div>
@@ -44,7 +45,7 @@ function AppLayout() {
   const { user } = useSelector((state) => state.auth);
 
   return (
-    <div className="flex min-h-screen bg-surface-950">
+    <div className="flex min-h-screen bg-gray-100 dark:bg-gray-900 transition-colors">
       {/* Mobile overlay */}
       {mobileMenuOpen && (
         <div
@@ -111,6 +112,7 @@ function AppLayout() {
 
 export default function App() {
   const dispatch = useDispatch();
+  const { theme } = useTheme();
   const { isAuthenticated, accessToken } = useSelector((state) => state.auth);
   const [initializing, setInitializing] = useState(true);
 
@@ -126,7 +128,7 @@ export default function App() {
 
   if (initializing) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-surface-950">
+      <div className="flex min-h-screen items-center justify-center bg-gray-100 dark:bg-gray-900">
         <PageSpinner />
       </div>
     );
@@ -152,12 +154,9 @@ export default function App() {
       <Toaster
         position="top-right"
         toastOptions={{
-          style: {
-            background: '#1e293b',
-            color: '#f1f5f9',
-            borderRadius: '12px',
-            border: '1px solid rgba(51, 65, 85, 0.5)',
-          },
+          style: theme === 'dark'
+            ? { background: '#1f2937', color: '#f3f4f6', borderRadius: '12px', border: '1px solid #374151' }
+            : { background: '#fff', color: '#111827', borderRadius: '12px', border: '1px solid #e5e7eb' },
         }}
       />
     </BrowserRouter>

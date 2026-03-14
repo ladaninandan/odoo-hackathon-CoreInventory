@@ -142,7 +142,7 @@ exports.refresh = async (req, res, next) => {
   }
 };
 
-// POST /api/v1/auth/forgot-password
+// POST /api/v1/auth/forgot-password (phone only — OTP via SMS)
 exports.forgotPassword = async (req, res, next) => {
   try {
     const { phone } = req.body;
@@ -167,7 +167,7 @@ exports.forgotPassword = async (req, res, next) => {
   }
 };
 
-// POST /api/v1/auth/verify-otp
+// POST /api/v1/auth/verify-otp (phone only)
 exports.verifyOtp = async (req, res, next) => {
   try {
     const { phone, otp } = req.body;
