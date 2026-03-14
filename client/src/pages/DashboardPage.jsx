@@ -36,9 +36,9 @@ const chartRanges = [
   { key: '365', label: 'Last year' },
 ];
 
-function KpiCard({ icon: Icon, label, value, sub, subPositive, iconBg, iconColor }) {
+function KpiCard({ icon: Icon, label, value, sub, subPositive, iconBg, iconColor, className = '' }) {
   return (
-    <div className="card p-5 flex items-start gap-4">
+    <div className={`card p-5 flex items-start gap-4 ${className}`}>
       <div className={`flex-shrink-0 rounded-lg p-2.5 ${iconBg}`}>
         <Icon className={`h-5 w-5 ${iconColor}`} />
       </div>
@@ -151,6 +151,7 @@ export default function DashboardPage() {
           subPositive
           iconBg="bg-blue-100"
           iconColor="text-blue-600"
+          className="animation-delay-75"
         />
         <KpiCard
           icon={AlertTriangle}
@@ -160,6 +161,7 @@ export default function DashboardPage() {
           subPositive={false}
           iconBg="bg-red-100"
           iconColor="text-red-600"
+          className="animation-delay-150"
         />
         <KpiCard
           icon={Truck}
@@ -168,6 +170,7 @@ export default function DashboardPage() {
           sub="29 Delivered"
           iconBg="bg-red-100"
           iconColor="text-red-600"
+          className="animation-delay-200"
         />
         <KpiCard
           icon={Truck}
@@ -177,6 +180,7 @@ export default function DashboardPage() {
           subPositive
           iconBg="bg-violet-100"
           iconColor="text-violet-600"
+          className="animation-delay-300"
         />
       </div>
 

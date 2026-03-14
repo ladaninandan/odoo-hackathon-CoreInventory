@@ -22,7 +22,7 @@ export default function ReportsPage() {
     setLoading(format);
     try {
       const { data } = await api.get('/reports/stock-summary');
-      const rows = data.data.summary;
+      const rows = data?.data?.summary ?? [];
 
       if (format === 'pdf') {
         exportToPdf('Stock Summary Report', stockColumns, rows, 'stock-summary.pdf');
@@ -32,9 +32,11 @@ export default function ReportsPage() {
         toast.success('Excel downloaded');
       }
     } catch (err) {
-      toast.error('Failed to generate report');
+      const message = err.response?.data?.message || err.message || 'Failed to generate report';
+      toast.error(message);
+    } finally {
+      setLoading('');
     }
-    setLoading('');
   };
 
   return (

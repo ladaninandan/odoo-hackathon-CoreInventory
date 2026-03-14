@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const Transfer = require('../models/Transfer');
+const Product = require('../models/Product');
 const { writeEntry, getCurrentStock } = require('../services/stockService');
 const { sendSuccess, sendError } = require('../utils/apiResponse');
 
@@ -54,13 +55,15 @@ exports.validateTransfer = async (req, res, next) => {
   try {
     const transfer = await Transfer.findById(req.params.id).session(session);
     if (!transfer) { await session.abortTransaction(); return sendError(res, 404, 'Transfer not found'); }
-    if (transfer.status === 'done') { await session.abortTransaction(); return sendError(res, 400, 'Already validated'); }
+    if (transfer.status === 'done') { await session.abortTransaction(); return sendError(res, 400, 'Transfer already validated'); }
 
     for (const line of transfer.lines) {
       const stock = await getCurrentStock(line.product, transfer.fromWarehouse);
       if (stock < line.qty) {
         await session.abortTransaction();
-        return sendError(res, 400, `Insufficient stock in source warehouse for product ${line.product}`);
+        const productDoc = await Product.findById(line.product).select('name sku').lean();
+        const productLabel = productDoc ? `${productDoc.name} (${productDoc.sku})` : line.product.toString();
+        return sendError(res, 400, `Insufficient stock in source warehouse. ${productLabel}: need ${line.qty}, only ${stock} available.`);
       }
 
       // Deduct from source

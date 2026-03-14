@@ -1,4 +1,5 @@
 const mongoose = require('mongoose');
+const Counter = require('./Counter');
 
 const transferSchema = new mongoose.Schema(
   {
@@ -20,6 +21,7 @@ const transferSchema = new mongoose.Schema(
     },
     scheduledDate: { type: Date },
     validatedAt: { type: Date },
+    validatedBy: { type: mongoose.Schema.Types.ObjectId, ref: 'User' },
     lines: [
       {
         product: {
@@ -39,11 +41,22 @@ const transferSchema = new mongoose.Schema(
   { timestamps: true }
 );
 
-// Auto-generate transferNumber if not provided
+// Seed counter from existing transfers (run once when counter is missing)
+async function ensureTransferCounter() {
+  const exists = await Counter.findById('transfer');
+  if (!exists) {
+    const maxDoc = await mongoose.model('Transfer').findOne().sort({ transferNumber: -1 }).select('transferNumber').lean();
+    const num = maxDoc && maxDoc.transferNumber ? parseInt(String(maxDoc.transferNumber).replace(/^TRF-/, ''), 10) || 0 : 0;
+    await Counter.create({ _id: 'transfer', seq: num });
+  }
+}
+
+// Auto-generate transferNumber atomically (avoids duplicate on concurrent creates)
 transferSchema.pre('validate', async function (next) {
   if (!this.transferNumber) {
-    const count = await mongoose.model('Transfer').countDocuments();
-    this.transferNumber = `TRF-${String(count + 1).padStart(5, '0')}`;
+    await ensureTransferCounter();
+    const seq = await Counter.getNext('transfer');
+    this.transferNumber = `TRF-${String(seq).padStart(5, '0')}`;
   }
   next();
 });

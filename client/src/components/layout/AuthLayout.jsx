@@ -39,7 +39,7 @@ export default function AuthLayout({ variant = 'default', children }) {
       </div>
 
       {/* Right panel — white form */}
-      <div className="flex-1 flex flex-col justify-center bg-white px-6 py-12 sm:px-12 lg:px-16">
+      <div className="flex-1 flex flex-col justify-center bg-white px-6 py-12 sm:px-12 lg:px-16 animate-fade-in-up">
         {children}
       </div>
     </div>

@@ -4,6 +4,17 @@
 @tailwind components;
 @tailwind utilities;
 
+@keyframes card-fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
 @layer base {
   body {
     @apply bg-gray-100 text-gray-900 font-sans antialiased transition-colors duration-200;
@@ -18,7 +29,7 @@
 @layer components {
   .btn {
     @apply inline-flex items-center justify-center gap-2 rounded-lg px-4 py-2.5 text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed;
-    @apply focus:ring-offset-white dark:focus:ring-offset-gray-900;
+    @apply focus:ring-offset-white dark:focus:ring-offset-gray-900 active:scale-[0.98];
   }
 
   .btn-primary {
@@ -44,6 +55,7 @@
   .card {
     @apply rounded-xl border bg-white transition-all duration-200;
     @apply border-gray-200 shadow-md hover:shadow-lg dark:border-gray-700 dark:bg-gray-800;
+    animation: card-fade-in-up 0.35s ease-out forwards;
   }
 
   .input {
@@ -108,6 +120,20 @@
   .dark .card tbody tr:hover {
     @apply bg-gray-700/30;
   }
+
+  /* Table row hover transition */
+  .card tbody tr {
+    @apply transition-colors duration-150;
+  }
+}
+
+/* Animation stagger delays */
+@layer utilities {
+  .animation-delay-75 { animation-delay: 75ms; }
+  .animation-delay-150 { animation-delay: 150ms; }
+  .animation-delay-200 { animation-delay: 200ms; }
+  .animation-delay-300 { animation-delay: 300ms; }
+  .animation-delay-400 { animation-delay: 400ms; }
 }
 
 /* Custom scrollbar */

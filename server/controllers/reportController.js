@@ -149,15 +149,15 @@ exports.getStockSummaryReport = async (req, res, next) => {
     const summary = await StockLedger.aggregate([
       { $group: { _id: { product: '$product', warehouse: '$warehouse' }, currentStock: { $sum: '$qtyChange' } } },
       { $lookup: { from: 'products', localField: '_id.product', foreignField: '_id', as: 'product' } },
-      { $unwind: '$product' },
+      { $unwind: { path: '$product', preserveNullAndEmptyArrays: true } },
       { $lookup: { from: 'warehouses', localField: '_id.warehouse', foreignField: '_id', as: 'warehouse' } },
-      { $unwind: '$warehouse' },
+      { $unwind: { path: '$warehouse', preserveNullAndEmptyArrays: true } },
       {
         $project: {
           _id: 0,
-          productName: '$product.name',
-          productSku: '$product.sku',
-          warehouseName: '$warehouse.name',
+          productName: { $ifNull: ['$product.name', '—'] },
+          productSku: { $ifNull: ['$product.sku', '—'] },
+          warehouseName: { $ifNull: ['$warehouse.name', '—'] },
           currentStock: 1,
           value: { $multiply: ['$currentStock', { $ifNull: ['$product.costPrice', 0] }] },
         },
@@ -165,7 +165,7 @@ exports.getStockSummaryReport = async (req, res, next) => {
       { $sort: { productName: 1 } },
     ]);
 
-    return sendSuccess(res, 200, 'Stock summary report', { summary });
+    return sendSuccess(res, 200, 'Stock summary report', { summary: summary || [] });
   } catch (error) {
     next(error);
   }
