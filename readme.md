@@ -1,3 +1,10 @@
+CoreInventory – Inventory Management System
+Overview
+
+CoreInventory is a modular Inventory Management System (IMS) designed to digitize and manage stock operations inside a business. It replaces manual tracking methods such as spreadsheets and physical registers with a centralized platform that tracks product movements in real time.
+
+The system manages products, warehouses, locations, receipts, deliveries, internal transfers, and inventory adjustments. Every change in stock is recorded in a stock movement ledger, ensuring full traceability and accurate inventory data.
+
 # CoreInventory — Full-Stack Architecture Blueprint
 
 > **Stack:** React 18 + Redux Toolkit + Tailwind CSS · Node.js + Express · MongoDB + Mongoose
